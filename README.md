@@ -72,8 +72,8 @@ Shortcuts:
 ## 2D classification demo
 
 In this demonstration we illustrate the decision function and update of 2D
-classifiers when adding training samples from negative or positive classe. We
-provise decision functions for Linear and GAussian Kernel SVMs.
+classifiers when adding training samples from negative or positive classes. We
+provide decision functions for Linear and Gaussian Kernel SVMs.
 
 ![screenshot](data/screen_classif_2D.png "screenshot")
 
