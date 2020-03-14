@@ -48,6 +48,7 @@ config=load_config(path+'/demos.ini')
 
 parser = argparse.ArgumentParser(description='Demos executions')  
 parser.add_argument('-l','--list',action='store_true', help='List all demos')
+parser.add_argument('-d','--dependencies',action='store_true', help='List dependencies for current demo')
 parser.add_argument('run',default='',nargs='?', help='List all demos')
 
 args = parser.parse_args()
@@ -56,6 +57,13 @@ if args.list:
     for key in config:
         print(key)
         print('\t{}'.format(config[key]['text']))
+elif args.dependencies:
+    if not args.run in config:
+        print('Error: "{}" is not a valid demo name. \nExecute demo.py with -l parameter to get a list of demos '.format(args.run))
+    else:
+        # execute the script
+        print(config[args.run]['depends'].replace('\\n','\n'))
+
 elif args.run:
     if not args.run in config:
         print('Error: "{}" is not a valid demo name. \nExecute demo.py with -l parameter to get a list of demos '.format(args.run))

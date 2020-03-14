@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 MIT License
@@ -57,6 +57,7 @@ def is_caps():
     return pygame.key.get_mods() & pygame.KMOD_SHIFT or  pygame.key.get_mods() & pygame.KMOD_CAPS
 
 
+# sampling parameters for pyaudio
 CHUNK = 4096
 WIDTH = 2
 CHANNELS = 1
@@ -65,13 +66,11 @@ RATE = 44100
 
 # init pygame
 pygame.init()
+
 # screen size
 size = width, height = 1024, 768
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Periodogram demonstration')
-
-
-
 
 # color palette
 pal = [(max((x-128)*2,0),x,min(x*2,255)) for x in range(256)]
@@ -81,7 +80,6 @@ world=pygame.Surface((width,height),depth=8) # MAIN SURFACE
 world.set_palette(pal)
 
 data=np.array(np.zeros((height,width)),dtype=int)
-
 
 # column start (width of left texts)
 cstart=150
