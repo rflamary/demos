@@ -30,15 +30,25 @@ you can store it in a text file and install it with pip.
 
 ## Total Variation on webcam
 
+In this demonstration we perform online Total Variation regularization on the
+video captured on the webcam. 
+
+Screenshot:
+
 ![screenshot](data/screen_tv.png "screenshot")
 
 Shortcuts:
 
-<kbd>q</kbd> : Quit demo
-<kbd>s</kbd> : Save screen to png
-
-
-
+* <kbd>q</kbd> : Quit demo
+* <kbd>s</kbd> : Save screen to png
+* <kbd>s</kbd> : Save screen to png
+* <kbd>Space</kbd> : Do full image TV
+* <kbd>h</kbd> : Do half image TV (screenshot)
+* <kbd>+</kbd> : Make TV regularization stronger
+* <kbd>-</kbd> : Make TV regularization weaker
+* <kbd>n</kbd> : Add salt and pepper noise
+* <kbd>b</kbd> : Make noise more aggressive
+* <kbd>,</kbd> : Make noise less aggressive
 
 
 
