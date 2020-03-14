@@ -32,6 +32,11 @@ you can store it in a text file and install it with pip.
 
 ![screenshot](data/screen_tv.png "screenshot")
 
+Shortcuts:
+
+<kbd>q</kbd> : Quit demo
+<kbd>s</kbd> : Save screen to png
+
 
 
 

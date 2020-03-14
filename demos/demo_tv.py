@@ -97,7 +97,7 @@ while(True):
     #frame2/=frame2.max()
              
     # Display the resulting frame
-    cv2.imshow('frame',frame2)
+    cv2.imshow('TV Webcam Demo',frame2)
     key=cv2.waitKey(1)
     if (key & 0xFF) in [ ord('q')]:
         break
