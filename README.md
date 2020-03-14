@@ -50,6 +50,12 @@ Shortcuts:
 * <kbd>b</kbd> : Make noise more aggressive
 * <kbd>,</kbd> : Make noise less aggressive
 
+Dependencies:
+
+This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
+webcam access and visualization and [prox_tv](https://github.com/albarji/proxTV) for total variation proximal
+operator. 
+
 ## Real time audio spectrum
 
 In this demonstration we plot in real time the audio spectrum (and the time
@@ -69,6 +75,11 @@ Shortcuts:
 * <kbd>P</kbd>/<kbd>p</kbd> : Change scale of power spectrum (up/down)
 * <kbd>S</kbd>/<kbd>s</kbd> : Change scale of power spectrum (up/down)
 
+Dependencies:
+
+This demo uses [pygame](https://www.pygame.org/) for visualization and
+[PyAudio](http://people.csail.mit.edu/hubert/pyaudio/) for microphone recording. 
+
 ## 2D classification demo
 
 In this demonstration we illustrate the decision function and update of 2D
@@ -87,6 +98,12 @@ provide decision functions for Linear and Gaussian Kernel SVMs.
 * <kbd>Down</kbd> : Make Gaussian Gamma parameter smaller
 * <kbd>s</kbd> : save screenshot
 
+Dependencies:
+
+This demo uses [pygame](https://www.pygame.org/) for visualization and
+[Scikit-learn](https://scikit-learn.org/) for classification.
+
+
 # Installing dependencies
 
 There is an important number of dependencies to run all the demos. Each script
@@ -95,5 +112,7 @@ To print the list of dependencies for a given demo you can run:
 ```bash
 python3 demo.py -d [demo_name]
 ```
+
+ 
 
 
