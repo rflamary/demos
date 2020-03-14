@@ -28,6 +28,12 @@ you can store it in a text file and install it with pip.
 
 # Demos
 
+## Total Variation on webcam
+
+![screenshot](data/screen_tv.png "screenshot")
+
+
+
 
 
 
