@@ -4,7 +4,7 @@ PYTHON Demos
 This repository contains several python3 scripts demonstrations. They all have
 MIT license.
 
-# How to run/install
+# How to run
 
 All scripts from the demos are available in the `demos` folder. 
 
@@ -50,8 +50,42 @@ Shortcuts:
 * <kbd>b</kbd> : Make noise more aggressive
 * <kbd>,</kbd> : Make noise less aggressive
 
+## Real time audio spectrum
 
+In this demonstration we plot in real time the audio spectrum (and the time
+frequency analysis) of the microphone.
 
+![screenshot](data/screen_spectrum.png "screenshot")
+
+Shortcuts:
+
+* <kbd>q</kbd> or <kbd>Esc</kbd>  : Quit demo
+* <kbd>Space</kbd>  : Pause/unpause demo
+* <kbd>r</kbd>  : Reset time
+* <kbd>+</kbd> or <kbd>N</kbd> : Multiply nfft by 2 (zoom in to lower frequencies)
+* <kbd>-</kbd> or <kbd>n</kbd>  : Divide nfft by 2 (zoom out)
+* <kbd>W</kbd> : Multiply time window size by 2
+* <kbd>w</kbd> : Divide time window size by 2
+* <kbd>P</kbd>/<kbd>p</kbd> : Change scale of power spectrum (up/down)
+* <kbd>S</kbd>/<kbd>s</kbd> : Change scale of power spectrum (up/down)
+
+## 2D classification demo
+
+In this demonstration we illustrate the decision function and update of 2D
+classifiers when adding training samples from negative or positive classe. We
+provise decision functions for Linear and GAussian Kernel SVMs.
+
+![screenshot](data/screen_classif_2D.png "screenshot")
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>left click</kbd> : Add samples from red class
+* <kbd>right click</kbd> : Add samples from blue class
+* <kbd>c</kbd> : Clear training data
+* <kbd>Space</kbd> : Show/hide decision function
+* <kbd>m</kbd> : Change classifier (Linear/Gaussian SVM)
+* <kbd>Up</kbd> : Make Gaussian Gamma parameter larger
+* <kbd>Down</kbd> : Make Gaussian Gamma parameter smaller
+* <kbd>s</kbd> : save screenshot
 
 # Installing dependencies
 

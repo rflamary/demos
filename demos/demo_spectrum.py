@@ -185,20 +185,22 @@ while 1:
                 print('nfft:', nfft)
             if event.key in [pygame.K_MINUS,269] :
                 if nfft>nfftvisu*2:
-                    nfft/=2
+                    if nfft>2048:
+                        nfft=int(nfft/2)
                 print( 'nfft:',nfft)
             if event.key in [pygame.K_n] :
                 if is_caps():
                     nfft*=2
                 elif nfft>nfftvisu*2:
-                    nfft/=2
+                    if nfft>2048:
+                        nfft=int(nfft/2)
                 CHUNK=nfft
                 print( 'nfft:',nfft)
             if event.key in [pygame.K_w] :
                 if is_caps():
                     CHUNK*=2
                 elif CHUNK>512:
-                    CHUNK/=2
+                    CHUNK=int(CHUNK/2)
                 nfft=CHUNK
                 print('frame:',CHUNK)
 
