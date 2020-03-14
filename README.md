@@ -89,8 +89,11 @@ provise decision functions for Linear and GAussian Kernel SVMs.
 
 # Installing dependencies
 
-There is an important number of dependencies to run all the demos. But each script has its own dependencies given in the dependencies folder.
-
-
+There is an important number of dependencies to run all the demos. Each script
+has its own dependencies. 
+To print the list of dependencies for a given demo you can run:
+```bash
+python3 demo.py -d [demo_name]
+```
 
 
