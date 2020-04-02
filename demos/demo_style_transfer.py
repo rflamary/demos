@@ -152,7 +152,7 @@ while(True):
     
     # Display the images
     cv2.imshow('Webcam',frame_webcam)
-    cv2.imshow('Transfered image',frame_style[:,:,from_RGB])
+    cv2.imshow('Transferred image',frame_style[:,:,from_RGB])
 
     cv2.namedWindow('Target Style', cv2.WINDOW_NORMAL)
     cv2.imshow('Target Style',lst_style[id_style][:,:,from_RGB])
@@ -171,6 +171,19 @@ while(True):
         print("Images saved")
     if (key & 0xFF) in [ ord('q')]:
         break
+    if (key & 0xFF) in [ ord('r')]:
+        if not os.path.exists('out/{}'.format(folder)):
+            os.mkdir('out/{}'.format(folder))
+        cv2.imwrite(fname.format(folder,idimg,'0'),frame_webcam)
+        for i in range(len(lst_style)):
+            temp=np.array(transfer(frame_webcam,lst_style[i],alpha=alpha))
+        #print(temp)
+            for k in range(3):
+                frame_style[:,:,k]=temp[k,:,:]/255
+            cv2.imwrite(fname.format(folder,idimg,lst_name[i]),frame_style[:,:,from_RGB]*255)
+            print('Applied style from file {}'.format(lst_style0[i]))
+            cv2.imshow('Transferred image ({})'.format(lst_style0[i]),frame_style[:,:,from_RGB])
+
     if (key & 0xFF) in [ ord('p')]:
         pause = not pause
         if pause:

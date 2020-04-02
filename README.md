@@ -104,6 +104,36 @@ This demo uses [pygame](https://www.pygame.org/) for visualization and
 [Scikit-learn](https://scikit-learn.org/) for classification.
 
 
+## Style Transfer Demo
+
+In this demonstration we illustrate style transfer on image taken from the
+webcam. You can choose among several styles.
+
+The implementation for style transfer has been shamelessly copied from
+[Pytorch_WCT](https://github.com/irasin/Pytorch_WCT) that is an implementation
+of the paper [Universal Style Transfer via Feature Transforms](https://arxiv.org/pdf/1705.08086.pdf). 
+
+Computational time for transfer takes a few seconds on a laptop with no GPU and  freeze the windows.
+
+![screenshot](data/screen_style_transfer.png "screenshot")
+
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>p</kbd> : Take picture/unfreeze webcam
+* <kbd>s</kbd> : Switch target style
+* <kbd>Space</kbd> : Apply selected style 
+* <kbd>w</kbd> : Save images to disk (folder out/)
+* <kbd>r</kbd> : Run transfer for all styles and save to file (takes forever)
+
+Dependencies:
+
+This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
+webcam access and visualization and [torch/torchvision](https://pytorch.org/) as deep learning
+framework.
+
+
+
+
 # Installing dependencies
 
 There is an important number of dependencies to run all the demos. Each script
