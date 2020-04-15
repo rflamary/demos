@@ -133,30 +133,34 @@ def draw_cov(C,mu,n,color):
 
     M=sp.linalg.sqrtm(C)
 
-    angles=2*np.pi*np.lispace(0,1,n)
+    angles=2*np.pi*np.linspace(0,1,n)
     v0=np.zeros(2)
     v0[0]=1
 
     for i in range(n-1):
-        pos1=M.dot(np.array([np.cos(angles[i]),np.sin(angles[i])]))
-        pos2=M.dot(np.array([np.cos(angles[i+1]),np.sin(angles[i+1])]))
-        pygame.draw.line(world,color,pos1,pos2)
+        pos1=M.dot(np.array([np.cos(angles[i]),np.sin(angles[i])]))+mu
+        pos2=M.dot(np.array([np.cos(angles[i+1]),np.sin(angles[i+1])]))+mu
+        pygame.draw.line(world,color,pos1,pos2,2)
 
 
 def update_cov(src,tgt):
     xs=np.array(src)
     xt=np.array(tgt)
 
-    xtot=np.concatenate((xs,xt),0)
+    mus=np.mean(xs,0)
+    mut=np.mean(xt,0)
 
-    C=np.cov(xtot.T)
+    Cs=np.cov(xs.T)
+    Ct=np.cov(xt.T)
+    C=(Cs*xs.shape[0]+Ct*xt.shape[0])/(xs.shape[0]+xt.shape[0])
 
-    m=np.mean(xs,0)
-
-    draw_cov(C,mu,100,color_tgt_out)
+    if idclass==0:
+        draw_cov(C,mut,100,color_tgt_center)
+        draw_cov(C,mus,100,color_src_center)
+    elif idclass==1:
+        draw_cov(Ct,mut,100,color_tgt_center)
+        draw_cov(Cs,mus,100,color_src_center)
     
-
-
 
 def draw_source(world,pos):
     pygame.draw.circle(world,color_src_out, pos, radius+width2)
@@ -281,8 +285,8 @@ while 1:
     for pos in lst_tgt:
         draw_target(world,pos) 
 
-    if lst_src and lst_tgt:
-        update_cov(src,tgt)
+    if len(lst_src)>2 and len(lst_tgt)>2:
+        update_cov(lst_src,lst_tgt)
 
 
     screen.blit(world, (0,0))        
