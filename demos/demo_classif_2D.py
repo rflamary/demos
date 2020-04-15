@@ -31,18 +31,24 @@ import scipy.misc
 import datetime
 
 from sklearn.svm import SVC
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 classifiers = [
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
     SVC,
     SVC
  ]
 
 classifier_params=[
+        {},
+        {},
         {"kernel":"linear", "C":0.025},
         {"gamma":5e-5, "C":10},    
         ]
 
-classifier_names=['Linear SVM','Gaussian SVM']
+classifier_names=['LDA', 'QDA', 'Linear SVM', 'Gaussian SVM']
 
 idclass=0
 
@@ -159,14 +165,14 @@ def get_text(lst,deltay=0):
     
     return lstf, lstp
 
-lst_txt=['Class 1: left click','Class 2 : right click','Clear : c','Switch method : m', 'Classifier: Linear SVM', '']
+lst_txt=['Class 1: left click','Class 2 : right click','Clear : c','Switch method : m', 'Classifier: LDA', '']
 
 lstf, lstp = get_text(lst_txt)
 
 def update_txt(lstf,reg,use_reg):
     lstf[4]=font2.render('Classifier : {}'.format(classifier_names[idclass]), 1, color_text)
     if idclass==1:
-        lstf[5]=font2.render('Gamma : {:1.2e}'.format(classifier_params[1]["gamma"]), 1, color_text)
+        lstf[5]=font2.render('Gamma : {:1.2e}'.format(classifier_params[3]["gamma"]), 1, color_text)
     else:
         lstf[5]=font2.render('', 1, color_text)
     
@@ -204,12 +210,12 @@ while 1:
                 clf=update_classif(lst_tgt,lst_src)
                 ygrid=clf.predict(xgrid).reshape((height,width))     
             if event.key in [pygame.K_DOWN] :   
-                classifier_params[1]["gamma"]/=1.5
+                classifier_params[3]["gamma"]/=1.5
                 update_txt(lstf,reg,use_reg)
                 clf=update_classif(lst_tgt,lst_src)
                 ygrid=clf.predict(xgrid).reshape((height,width))     
             if event.key in [pygame.K_UP] :   
-                classifier_params[1]["gamma"]*=1.5
+                classifier_params[32]["gamma"]*=1.5
                 update_txt(lstf,reg,use_reg)
                 clf=update_classif(lst_tgt,lst_src)
                 ygrid=clf.predict(xgrid).reshape((height,width))   
