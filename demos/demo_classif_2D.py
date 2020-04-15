@@ -29,6 +29,7 @@ import numpy as np
 import sys, pygame
 import scipy.misc
 import datetime
+import scipy as sp
 
 from sklearn.svm import SVC
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -127,6 +128,34 @@ lst_src=[]
 lst_tgt=[]
 
 G=np.zeros((0,0))
+
+def draw_cov(C,mu,n,color):
+
+    M=sp.linalg.sqrtm(C)
+
+    angles=2*np.pi*np.lispace(0,1,n)
+    v0=np.zeros(2)
+    v0[0]=1
+
+    for i in range(n-1):
+        pos1=M.dot(np.array([np.cos(angles[i]),np.sin(angles[i])]))
+        pos2=M.dot(np.array([np.cos(angles[i+1]),np.sin(angles[i+1])]))
+        pygame.draw.line(world,color,pos1,pos2)
+
+
+def update_cov(src,tgt):
+    xs=np.array(src)
+    xt=np.array(tgt)
+
+    xtot=np.concatenate((xs,xt),0)
+
+    C=np.cov(xtot.T)
+
+    m=np.mean(xs,0)
+
+    draw_cov(C,mu,100,color_tgt_out)
+    
+
 
 
 def draw_source(world,pos):
@@ -251,6 +280,10 @@ while 1:
         draw_source(world,pos)
     for pos in lst_tgt:
         draw_target(world,pos) 
+
+    if lst_src and lst_tgt:
+        update_cov(src,tgt)
+
 
     screen.blit(world, (0,0))        
 
