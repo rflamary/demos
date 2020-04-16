@@ -184,10 +184,15 @@ def update_classif(src,tgt):
     
     xtot=np.concatenate((xs,xt),0)
     ytot=np.concatenate((np.ones(xs.shape[0]),2*np.ones(xt.shape[0])),0)
-    
-    
-    
-    return classifiers[idclass](**classifier_params[idclass]).fit(xtot,ytot)
+    if idclass==1 and (xs.shape[0]<2 or xt.shape[0]<2):
+        class Dummy:
+
+            def predict(self,x):
+                return np.zeros(x.shape[0])
+
+        return Dummy()
+    else:
+        return classifiers[idclass](**classifier_params[idclass]).fit(xtot,ytot)
 
 def get_text(lst,deltay=0):
     lstf=[]
@@ -240,18 +245,21 @@ while 1:
             if event.key in [pygame.K_m] :
                 idclass= (idclass+1) % len(classifier_names)
                 update_txt(lstf,reg,use_reg)
-                clf=update_classif(lst_tgt,lst_src)
-                ygrid=clf.predict(xgrid).reshape((height,width))     
+                if lst_tgt and lst_src:
+                    clf=update_classif(lst_tgt,lst_src)
+                    ygrid=clf.predict(xgrid).reshape((height,width))     
             if event.key in [pygame.K_DOWN] :   
                 classifier_params[3]["gamma"]/=1.5
                 update_txt(lstf,reg,use_reg)
-                clf=update_classif(lst_tgt,lst_src)
-                ygrid=clf.predict(xgrid).reshape((height,width))     
+                if lst_tgt and lst_src:
+                    clf=update_classif(lst_tgt,lst_src)
+                    ygrid=clf.predict(xgrid).reshape((height,width))     
             if event.key in [pygame.K_UP] :   
                 classifier_params[32]["gamma"]*=1.5
                 update_txt(lstf,reg,use_reg)
-                clf=update_classif(lst_tgt,lst_src)
-                ygrid=clf.predict(xgrid).reshape((height,width))   
+                if lst_tgt and lst_src:
+                    clf=update_classif(lst_tgt,lst_src)
+                    ygrid=clf.predict(xgrid).reshape((height,width))   
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
             #print(event)
