@@ -39,7 +39,7 @@ classifiers = [
     LinearDiscriminantAnalysis,
     QuadraticDiscriminantAnalysis,
     SVC,
-    SVC
+    SVC,
  ]
 
 classifier_params=[
@@ -47,7 +47,7 @@ classifier_params=[
         {},
         {"kernel":"linear", "C":0.025},
         {"gamma":5e-5, "C":10},    
-        ]
+         ]
 
 classifier_names=['LDA', 'QDA', 'Linear SVM', 'Gaussian SVM']
 
@@ -184,13 +184,18 @@ def update_classif(src,tgt):
     
     xtot=np.concatenate((xs,xt),0)
     ytot=np.concatenate((np.ones(xs.shape[0]),2*np.ones(xt.shape[0])),0)
+
+    # QDA cannot handle less than 3 samples per class
     if idclass==1 and (xs.shape[0]<2 or xt.shape[0]<2):
         class Dummy:
-
             def predict(self,x):
                 return np.zeros(x.shape[0])
-
         return Dummy()
+    elif idclass==0 and (xs.shape[0]+xt.shape[0])<=2:
+        class Dummy:
+            def predict(self,x):
+                return np.zeros(x.shape[0])
+        return Dummy()       
     else:
         return classifiers[idclass](**classifier_params[idclass]).fit(xtot,ytot)
 
