@@ -131,7 +131,18 @@ This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
 webcam access and visualization and [torch/torchvision](https://pytorch.org/) as deep learning
 framework.
 
+## Face detection
 
+In this demo we use a Haar Cascade Classifier to detect faces and show the areas where a face was detected. We use the default face classifier from OpenCV that detect only frontal faces.
+
+![screenshot](data/screen_face_detection.png "screenshot")
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>s</kbd> : Save screenshot
+
+
+This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
+webcam access and visualization.
 
 
 # Installing dependencies
