@@ -90,7 +90,11 @@ def transfer(c,s,alpha=1):
         out = model(c_tensor, s_tensor, alpha)
     return out.numpy()[0,:,:,:]
 
-cap = cv2.VideoCapture(0)
+cam=os.getenv("CAMERA")
+if cam is None:
+    cap = cv2.VideoCapture(0)
+else:
+    cap = cv2.VideoCapture(int(cam))
 
 lst_style=['antimonocromatismo.jpg',
             'sketch.png',

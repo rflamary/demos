@@ -28,9 +28,13 @@ SOFTWARE.
 import numpy as np
 import cv2
 import prox_tv as ptv
+import os 
 
-
-cap = cv2.VideoCapture(0)
+cam=os.getenv("CAMERA")
+if cam is None:
+    cap = cv2.VideoCapture(0)
+else:
+    cap = cv2.VideoCapture(int(cam))
 
 reg=2e-1
 alpha=0.2

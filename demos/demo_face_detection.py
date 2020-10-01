@@ -33,7 +33,11 @@ import os
 path_classif=os.path.dirname(__file__)+'/../data/models/haarcascade_frontalface_default.xml'
 
 
-cap = cv2.VideoCapture(0)
+cam=os.getenv("CAMERA")
+if cam is None:
+    cap = cv2.VideoCapture(0)
+else:
+    cap = cv2.VideoCapture(int(cam))
 
 face_cascade = cv2.CascadeClassifier(path_classif)
 
