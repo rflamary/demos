@@ -131,6 +131,32 @@ This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
 webcam access and visualization and [torch/torchvision](https://pytorch.org/) as deep learning
 framework.
 
+## Discrete Optimal ransport demo
+
+In this demonstration we plot in real time the solution of optimal transport
+between discrete distributions. The samples from source can be added by a left
+clock and samples from target distribution can be added by a right click.
+
+
+![screenshot](data/screen_ot.png "screenshot")
+
+Shortcuts:
+
+* <kbd>q</kbd> or <kbd>Esc</kbd>  : Quit demo
+* <kbd>Space</kbd>  : Show/Hide the optimal transport matrix
+* <kbd>c</kbd>  : Clear all samples
+* <kbd>r</kbd> : Activate/deactivate entropic regularization
+* <kbd>p</kbd> or <kbd>m</kbd> : Increase or decrease regularization parameter
+* <kbd>t</kbd> : Rotate the target distribution
+
+
+
+Dependencies:
+
+This demo uses [pygame](https://www.pygame.org/) for visualization and
+[POT](https://github.com/PythonOT/POT) for computing the solution of
+the OT problem. 
+
 ## Face detection
 
 In this demo we use a Haar Cascade Classifier to detect faces and show the areas where a face was detected. We use the default face classifier from OpenCV that detect only frontal faces.
