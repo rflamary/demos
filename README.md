@@ -131,9 +131,9 @@ This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
 webcam access and visualization and [torch/torchvision](https://pytorch.org/) as deep learning
 framework.
 
-## Discrete Optimal ransport demo
+## Discrete Optimal Transport demo
 
-In this demonstration we plot in real time the solution of optimal transport
+In this demonstration we plot in real time the solution of optimal transport (OT)
 between discrete distributions. The samples from source can be added by a left
 clock and samples from target distribution can be added by a right click.
 
