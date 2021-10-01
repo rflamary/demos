@@ -57,7 +57,7 @@ pygame.display.set_caption('Discrete OT demonstration')
 pal = [(max((x-128)*2,0),x,min(x*2,255)) for x in range(256)]
 
 # background image
-world=pygame.Surface((width,height),depth=8) # MAIN SURFACE
+world=pygame.Surface((width,height)) # MAIN SURFACE
 #world.set_palette(pal)
 
 data=np.array(np.zeros((height,width)),dtype=int)
@@ -72,7 +72,8 @@ color_src_out=(150, 0, 0)
 color_tgt_center=(0, 0, 250)
 color_tgt_out=(0, 0, 150)
 
-color_G=(255, 255, 255)
+color_G=(0, 0, 0)
+
 # prepare texts
 font = pygame.font.Font(None, 25) # title
 font2 = pygame.font.Font(None, 20) # text
@@ -94,6 +95,17 @@ lst_tgt=[]
 
 G=np.zeros((0,0))
 
+def get_color(s,color=None):
+    if color is None:
+        color=color_G
+    col=pygame.Color(*color)
+    H, S, L, A = col.hsla
+
+    temp = pygame.Color(255,255,255)
+    temp.hsla = (H, S, ((1-s)*100+s*L), A)
+    #return pygame.Color(*[int(min(255*(1-s)+s*c,255)) for c in color])
+    #return pygame.Color(255,255,255).lerp(color,s)
+    return temp
 
 def draw_source(world,pos):
     pygame.draw.circle(world,color_src_out, pos, radius+width)
@@ -127,15 +139,25 @@ def update_G(src,tgt):
     else:
         return ot.sinkhorn([],[],M,reg)
 
-def draw_G(world,G,src,tgt):
+def draw_G2(world,G,src,tgt):
     Gmax=G.max()
     for i in range(G.shape[0]):
         for j in range(G.shape[1]):
             if G[i,j]>1e-8:
-                scale= ((1-G[i,j]/Gmax)*scale_G)+(1-scale_G)
+                scale= G[i,j]/Gmax
                 #print([int(255*(scale)) for c in color_G])
-                pygame.draw.line(world,[int(255*(scale)) for c in color_G],src[i],tgt[j],width_m) #
-                #pygame.draw.line(world,color_G,src[i],tgt[j],int(width_m*+1)) #
+                pygame.draw.line(world,get_color(scale),src[i],tgt[j],width_m) #
+
+
+def draw_G(world,G,src,tgt):
+    Gmax=G.max()
+    isort = np.argsort(G.ravel())
+    for k in isort:
+        i,j = np.unravel_index(k,G.shape)
+        if G[i,j]>1e-8:
+            scale= G[i,j]/Gmax
+            #print([int(255*(scale)) for c in color_G])
+            pygame.draw.line(world,get_color(scale),src[i],tgt[j],width_m) #
 
 def get_text(lst,deltay=0):
     lstf=[]
@@ -232,13 +254,7 @@ while 1:
             if lst_tgt and lst_src:
                 G=update_G(lst_src,lst_tgt)
 
- 
-    data[:]=255
-    
-    # appedn data to the window
-    pygame.surfarray.blit_array(world,data.T) #place data in window
-    
-    
+    world.fill((255,255,255))
 
 
     # print all texts
