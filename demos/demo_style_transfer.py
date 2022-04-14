@@ -157,9 +157,14 @@ while(True):
 
     if not pause:
         frame_webcam=frame2
-    
+
     # Display the images
     cv2.imshow('Webcam',frame_webcam)
+
+    # Resize the webcam image if it is coming form a full HD webcam to prevent a shape missmatch when transfering
+    if resize:
+        frame_webcam = cv2.resize(frame_webcam, (1280, 720))
+
     cv2.imshow('Transferred image',frame_style[:,:,from_RGB])
 
     cv2.namedWindow('Target Style', cv2.WINDOW_NORMAL)
@@ -204,8 +209,6 @@ while(True):
         print('alpha={}'.format(alpha))      
     if (key & 0xFF) in [ ord(' ')]:
         pause=True
-        if resize:
-            frame_webcam = cv2.resize(frame_webcam, (1280, 720))
         temp=np.array(transfer(frame_webcam,lst_style[id_style],alpha=alpha))
         for i in range(3):
             frame_style[:,:,i]=temp[i,:,:]/255
