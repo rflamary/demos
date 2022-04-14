@@ -81,9 +81,9 @@ model = MultiLevelAE(models_path)
 model = model.to(device)
 print("Model loaded")
 
-
 def transfer(c,s,alpha=1):
     c=c[:,:,::-1].copy()
+    c = cv2.resize(c, (1280, 720))
     c_tensor = trans(c.astype(np.float32)).unsqueeze(0).to(device)
     s_tensor = trans(s.astype(np.float32)).unsqueeze(0).to(device)
     with torch.no_grad():
@@ -141,7 +141,7 @@ pause=False
 ret, frame0 = cap.read()
 frame0=np.asfortranarray(np.array(frame0)/255)
 frame_webcam=frame0
-frame_style=frame0*0
+frame_style=cv2.resize(frame0*0, (1280, 720))
 
 
 while(True):
@@ -201,7 +201,6 @@ while(True):
     if (key & 0xFF) in [ ord(' ')]:
         pause=True
         temp=np.array(transfer(frame_webcam,lst_style[id_style],alpha=alpha))
-        #print(temp)
         for i in range(3):
             frame_style[:,:,i]=temp[i,:,:]/255
         print('Applied style from file {}'.format(lst_style0[id_style]))
