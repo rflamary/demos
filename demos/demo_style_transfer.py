@@ -83,7 +83,6 @@ print("Model loaded")
 
 def transfer(c,s,alpha=1):
     c=c[:,:,::-1].copy()
-    c = cv2.resize(c, (1280, 720))
     c_tensor = trans(c.astype(np.float32)).unsqueeze(0).to(device)
     s_tensor = trans(s.astype(np.float32)).unsqueeze(0).to(device)
     with torch.no_grad():
@@ -141,8 +140,13 @@ pause=False
 ret, frame0 = cap.read()
 frame0=np.asfortranarray(np.array(frame0)/255)
 frame_webcam=frame0
-frame_style=cv2.resize(frame0*0, (1280, 720))
+frame_style = frame0*0
 
+resize = False
+if frame_style.shape != (720, 1080, 3):
+    resize = True
+    frame_style=cv2.resize(frame0*0, (1280, 720))
+    print("Warning, resizing your full HD webcame image to 1280x720x3!")
 
 while(True):
     # Capture frame-by-frame
@@ -200,6 +204,8 @@ while(True):
         print('alpha={}'.format(alpha))      
     if (key & 0xFF) in [ ord(' ')]:
         pause=True
+        if resize:
+            frame_webcam = cv2.resize(frame_webcam, (1280, 720))
         temp=np.array(transfer(frame_webcam,lst_style[id_style],alpha=alpha))
         for i in range(3):
             frame_style[:,:,i]=temp[i,:,:]/255
