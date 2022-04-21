@@ -310,17 +310,11 @@ class MultiLevelAE(nn.Module):
         return getattr(self, f'decoder{level}')(res)
 
     def forward(self, content_image, style_image, alpha=1):
-        print(content_image.shape)
         r5 = self.transform_level(content_image, style_image, alpha, 5)
-        print(r5.shape)
         r4 = self.transform_level(r5, style_image, alpha, 4)
-        print(r4.shape)
         r3 = self.transform_level(r4, style_image, alpha, 3)
-        print(r3.shape)
         r2 = self.transform_level(r3, style_image, alpha, 2)
-        print(r2.shape)
         r1 = self.transform_level(r2, style_image, alpha, 1)
-        print(r1.shape)
 
         return r1
 

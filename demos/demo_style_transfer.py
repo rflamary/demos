@@ -142,12 +142,20 @@ frame0=np.asfortranarray(np.array(frame0)/255)
 frame_webcam=frame0
 frame_style = frame0*0
 
-resize = False
-if frame_style.shape != (720, 1080, 3):
-    resize = True
-    frame_style=cv2.resize(frame0*0, (1280, 720))
-    print("Warning, resizing your full HD webcame image to 1280x720x3!")
 
+resize_shape = os.getenv('RESIZE', '1280x720').split('x')
+assert len(resize_shape) == 2, "Error: invalid resize parameter: {}".format(resize_shape)
+resize_shape = tuple([int(i) for i in resize_shape[::-1]] + [3])[::-1]
+
+# When using standard resolution of 1280x720 we don't need to resize the output because
+# the model will predict frames of the same size
+resize = False
+if frame_style.shape != resize_shape[::-1]:
+    # For other resolution like for example smaller ones, the output is resized
+    resize = True
+    print("Warning, resizing your webcame image from {}x{}x3 to {}x{}x3!".format(frame_style.shape[1], \
+            frame_style.shape[0], resize_shape[1], resize_shape[0]))
+    frame_style = cv2.resize(frame_style, resize_shape[1:])
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
@@ -160,13 +168,7 @@ while(True):
 
     # Display the images
     cv2.imshow('Webcam',frame_webcam)
-
-    # Resize the webcam image if it is coming form a full HD webcam to prevent a shape missmatch when transfering
-    if resize:
-        frame_webcam = cv2.resize(frame_webcam, (1280, 720))
-
     cv2.imshow('Transferred image',frame_style[:,:,from_RGB])
-
     cv2.namedWindow('Target Style', cv2.WINDOW_NORMAL)
     cv2.imshow('Target Style',lst_style[id_style][:,:,from_RGB])
 
@@ -187,10 +189,13 @@ while(True):
     if (key & 0xFF) in [ ord('r')]:
         if not os.path.exists('out/{}'.format(folder)):
             os.mkdir('out/{}'.format(folder))
+
+        if resize:
+            frame_webcam = cv2.resize(frame_webcam, resize_shape[1:])
+
         cv2.imwrite(fname.format(folder,idimg,'0'),frame_webcam)
         for i in range(len(lst_style)):
             temp=np.array(transfer(frame_webcam,lst_style[i],alpha=alpha))
-        #print(temp)
             for k in range(3):
                 frame_style[:,:,k]=temp[k,:,:]/255
             cv2.imwrite(fname.format(folder,idimg,lst_name[i]),frame_style[:,:,from_RGB]*255)
@@ -209,7 +214,15 @@ while(True):
         print('alpha={}'.format(alpha))      
     if (key & 0xFF) in [ ord(' ')]:
         pause=True
-        temp=np.array(transfer(frame_webcam,lst_style[id_style],alpha=alpha))
+
+        if resize:
+            frame_webcam = cv2.resize(frame_webcam, resize_shape[1:])
+
+        temp=transfer(frame_webcam,lst_style[id_style],alpha=alpha)
+        if resize:
+            temp = np.transpose(temp, (1,2,0))
+            temp = cv2.resize(temp, resize_shape[1:])
+            temp = np.transpose(temp, (2,0,1))
         for i in range(3):
             frame_style[:,:,i]=temp[i,:,:]/255
         print('Applied style from file {}'.format(lst_style0[id_style]))
