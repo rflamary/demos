@@ -148,7 +148,7 @@ Shortcuts:
 * <kbd>r</kbd> : Activate/deactivate entropic regularization
 * <kbd>p</kbd> or <kbd>m</kbd> : Increase or decrease regularization parameter
 * <kbd>t</kbd> : Rotate the target distribution
-
+* <kbd>e</kbd> : remove some samplesso that they have equal number
 
 
 Dependencies:
