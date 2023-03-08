@@ -76,7 +76,7 @@ color_tgt_center = (0, 0, 250)
 color_tgt_out = (0, 0, 150)
 
 color_wall = (115, 0, 0)
-wall_pos = pygame.Rect(508, 400, 8, 400)
+wall_pos = pygame.Rect(508, 384, 8, 384)
 
 color_G = (0, 0, 0)
 
@@ -97,7 +97,7 @@ reg = 1
 wall = False
 
 #
-lst_metrics = ['euclidean', 'sqeuclidean', 'cityblock', 'wall']
+lst_metrics = ['euclidean', 'sqeuclidean', 'cityblock', 'wall (geodesic)', 'euclidean (+paywall)']
 id_metric = 0
 
 
@@ -149,22 +149,43 @@ def rotate_list(lst, theta):
 
 
 def intercept_wall(x1, x2):
+    
     xm = 1024/2
-    delta = x2[0]-x1[0] + 1e-300
-    ywal = x1[1]*(xm-x1[0])/delta+x2[1]*(x2[0]-xm)/delta
-    return ywal > 398
+    if (x1[0]<xm and x2[0]<xm) or (x1[0]>=xm and x2[0]>=xm):
+        return False
+    delta = abs(xm-x1[0])+abs(x2[0]-xm) + 1e-300
+    ywal = x1[1]*abs(x2[0]-xm)/delta+x2[1]*abs(xm-x1[0])/delta
+    return ywal > 384 
 
+def value_y_wall(x1, x2):
+    
+    xm = 1024/2
+    if (x1[0]<xm and x2[0]<xm) or (x1[0]>=xm and x2[0]>=xm):
+        return False
+    delta = abs(xm-x1[0])+abs(x2[0]-xm) + 1e-300
+    ywal = x1[1]*abs(xm-x1[0])/delta+x2[1]*abs(x2[0]-xm)/delta
+    return ywal 
+
+def dist(x1,x2):
+    return np.sqrt(np.sum(np.square(np.array(x1)-np.array(x2))))
 
 def update_G(src, tgt):
     xs = np.array(src)
     xt = np.array(tgt)
     metric = lst_metrics[id_metric]
-    if metric == 'wall':
+    mid = (512, 384)
+    if id_metric == 3: # wall geodesic
         M = ot.dist(xs, xt, 'euclidean')
         for i in range(M.shape[0]):
             for j in range(M.shape[1]):
                 if intercept_wall(src[i], tgt[j]):
-                    M[i, j] += 100000
+                    M[i, j] = dist(src[i], mid)+ dist(tgt[j], mid)
+    elif id_metric == 4:
+        M = ot.dist(xs, xt, 'euclidean')
+        for i in range(M.shape[0]):
+            for j in range(M.shape[1]):
+                if intercept_wall(src[i], tgt[j]):
+                    M[i, j] += 10000
     else:
         M = ot.dist(xs, xt, metric)
     if not use_reg:
@@ -192,7 +213,21 @@ def draw_G(world, G, src, tgt):
         if G[i, j] > 1e-8:
             scale = G[i, j]/Gmax
             #print([int(255*(scale)) for c in color_G])
-            pygame.draw.line(world, get_color(scale), src[i], tgt[j], width_m)
+            if id_metric == 2:
+                mid = (tgt[j][0], src[i][1])
+                pygame.draw.line(world, get_color(scale), src[i], mid, width_m)
+                pygame.draw.line(world, get_color(scale), mid, tgt[j], width_m)
+            
+            elif id_metric == 3:
+                if intercept_wall(src[i], tgt[j]):
+                    mid = (512, 384)
+                    pygame.draw.line(world, get_color(scale), src[i], mid, width_m)
+                    pygame.draw.line(world, get_color(scale), mid, tgt[j], width_m)
+                else:
+                    pygame.draw.line(world, get_color(scale),
+                                     src[i], tgt[j], width_m)
+            else:
+                pygame.draw.line(world, get_color(scale), src[i], tgt[j], width_m)
 
 
 def get_text(lst, deltay=0):
@@ -313,7 +348,7 @@ while 1:
 
     world.fill((255, 255, 255))
 
-    if wall and id_metric == 3:
+    if (wall and id_metric == 3) or id_metric == 4:
         pygame.draw.rect(world, color_wall, wall_pos)
 
     # print all texts
