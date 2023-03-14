@@ -30,7 +30,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import copy
-
+import ot
 
 class Interpolate(nn.Module):
     def __init__(self, scale_factor=2):
@@ -289,6 +289,27 @@ def whiten_and_color(content_feature, style_feature, alpha=1):
     return colored_feature
 
 
+def whiten_and_color2(content_feature, style_feature, alpha=1):
+    """
+     transform using Linar OT mapping
+    """
+    cf = content_feature.squeeze(0)  # .double()
+    c, ch, cw = cf.shape
+    cf = cf.reshape(c, -1)
+
+    sf = style_feature.squeeze(0)  # .double()
+    c, sh, sw = sf.shape
+    sf = sf.reshape(c, -1)
+
+    adapt = ot.da.LinearTransport(reg=10000) 
+
+    colored = adapt.fit_transform(Xs=cf.t(), Xt=sf.t()).t()
+
+    colored_feature = colored.reshape(c, ch, cw).unsqueeze(0).float()
+
+    colored_feature = alpha * colored_feature + (1 - alpha) * content_feature
+    return colored_feature
+
 class SingleLevelAE(nn.Module):
     def __init__(self, level, pretrained_path_dir='model_state'):
         super().__init__()
@@ -325,7 +346,7 @@ class MultiLevelAE(nn.Module):
     def transform_level(self, content_image, style_image, alpha, level):
         content_feature = self.encoder(content_image, f'relu{level}_1')
         style_feature = self.encoder(style_image, f'relu{level}_1')
-        res = whiten_and_color(content_feature, style_feature, alpha)
+        res = whiten_and_color2(content_feature, style_feature, alpha)
         return getattr(self, f'decoder{level}')(res)
 
     def forward(self, content_image, style_image, alpha=1):
