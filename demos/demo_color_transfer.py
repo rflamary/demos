@@ -30,65 +30,48 @@ import cv2
 import scipy.ndimage
 from PIL import Image
 import torch
-from torchvision import transforms
-from torchvision.utils import save_image
-from model_style_transfer import MultiLevelAE
 from datetime import datetime
 import os
 import urllib
+import ot
 
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-style_path = dir_path+'/../data/styles/'
-models_path = dir_path+'/../data/models'
-url_models = 'https://remi.flamary.com/download/models/'
-
 folder = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-
-trans = transforms.Compose([transforms.ToTensor()])
+style_path = dir_path+'/../data/styles/'
 
 if not os.path.exists('out'):
     os.mkdir('out')
-
-
-lst_model_files = ["decoder_relu1_1.pth",
-                   "decoder_relu2_1.pth",
-                   "decoder_relu3_1.pth",
-                   "decoder_relu4_1.pth",
-                   "decoder_relu5_1.pth",
-                   "vgg_normalised_conv5_1.pth"]
-
-# test if models already downloaded
-for m in lst_model_files:
-    if not os.path.exists(models_path+'/'+m):
-        print('Downloading model file : {}'.format(m))
-        urllib.request.urlretrieve(url_models+m, models_path+'/'+m)
-
 
 idimg = 0
 
 fname = "out/{}/{}_{}.jpg"
 
-if torch.cuda.is_available():
-    device = torch.device(f'cuda')
-    print(f'# CUDA available: {torch.cuda.get_device_name(0)}')
-else:
-    device = 'cpu'
+lst_map = ['Linear OT','Exact OT', 'Sinkhorn OT']
+id_map = 0
 
-
-model = MultiLevelAE(models_path)
-model = model.to(device)
-print("Model loaded")
-
+n_keep = 200
 
 def transfer(c, s, alpha=1):
-    c = c[:, :, ::-1].copy()
-    c_tensor = trans(c.astype(np.float32)).unsqueeze(0).to(device)
-    s_tensor = trans(s.astype(np.float32)).unsqueeze(0).to(device)
-    with torch.no_grad():
-        out = model(c_tensor, s_tensor, alpha)
-    return out.numpy()[0, :, :, :]
+    nxs = c.shape[0]*c.shape[1]
+    nxt = s.shape[0]*s.shape[1]
+    xs = c.copy().reshape((nxs,3))*1.0
+    xt = s.copy().reshape((nxt,3))*1.0
+    if id_map==0:
+        adapt = ot.da.LinearTransport()
+        adapt.fit(xs, Xt=xt)
+    elif id_map==1:
+        adapt = ot.da.EMDTransport()
+        xs2 = xs[np.random.permutation(xs.shape[0])[:n_keep],:]
+        xt2 = xt[np.random.permutation(xt.shape[0])[:n_keep],:]
+        adapt.fit(xs2, Xt=xt2)
+    elif id_map==2:
+        adapt = ot.da.SinkhornTransport(reg_e=100)
+        xs2 = xs[np.random.permutation(xs.shape[0])[:n_keep],:]
+        xt2 = xt[np.random.permutation(xt.shape[0])[:n_keep],:]
+        adapt.fit(xs2, Xt=xt2)
+    return adapt.transform(xs).reshape(c.shape)
 
 
 cam = os.getenv("CAMERA")
@@ -158,10 +141,10 @@ while (True):
 
     # Display the images
     cv2.imshow('Webcam', frame_webcam)
-    cv2.imshow('Transferred image', frame_style[:, :, from_RGB])
+    cv2.imshow('Transferred image ({})'.format(lst_map[id_map]), frame_style[:, :, from_RGB])
 
-    cv2.namedWindow('Target Style', cv2.WINDOW_NORMAL)
-    cv2.imshow('Target Style', lst_style[id_style][:, :, from_RGB])
+    cv2.namedWindow('Target Color', cv2.WINDOW_NORMAL)
+    cv2.imshow('Target Color', lst_style[id_style][:, :, from_RGB])
 
     # handle inputs
     key = cv2.waitKey(1)
@@ -203,13 +186,21 @@ while (True):
     if (key & 0xFF) in [ord('a')]:
         alpha = max(0, alpha-0.1)
         print('alpha={}'.format(alpha))
+    if (key & 0xFF) in [ord('m')]:
+        id_map = (id_map+1) % len(lst_map)
+        temp = np.array(
+            transfer(frame_webcam, lst_style[id_style], alpha=alpha))
+        # print(temp)
+        for i in range(3):
+            frame_style[:, :, i] = temp[ :, :, i]/255
+        print('Applied style from file {}'.format(lst_style0[id_style]))        
     if (key & 0xFF) in [ord(' ')]:
         pause = True
         temp = np.array(
             transfer(frame_webcam, lst_style[id_style], alpha=alpha))
         # print(temp)
         for i in range(3):
-            frame_style[:, :, i] = temp[i, :, :]/255
+            frame_style[:, :, i] = temp[ :, :, i]/255
         print('Applied style from file {}'.format(lst_style0[id_style]))
 
 

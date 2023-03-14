@@ -23,13 +23,14 @@ SOFTWARE.
 
 """
 
-# This file in a merging of several files from 
+# This file in a merging of several files from
 # https://github.com/irasin/Pytorch_WCT
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import copy
+
 
 class Interpolate(nn.Module):
     def __init__(self, scale_factor=2):
@@ -84,157 +85,166 @@ vgg_decoder_relu5_1 = nn.Sequential(
     nn.ReLU(),
     nn.ReflectionPad2d((1, 1, 1, 1)),
     nn.Conv2d(64, 3, 3)
-    )
+)
 
 
 class Decoder(nn.Module):
     def __init__(self, level, pretrained_path=None):
         super().__init__()
         if level == 1:
-            self.net = nn.Sequential(*copy.deepcopy(list(vgg_decoder_relu5_1.children())[-2:]))
+            self.net = nn.Sequential(
+                *copy.deepcopy(list(vgg_decoder_relu5_1.children())[-2:]))
         elif level == 2:
-            self.net = nn.Sequential(*copy.deepcopy(list(vgg_decoder_relu5_1.children())[-9:]))
+            self.net = nn.Sequential(
+                *copy.deepcopy(list(vgg_decoder_relu5_1.children())[-9:]))
         elif level == 3:
-            self.net = nn.Sequential(*copy.deepcopy(list(vgg_decoder_relu5_1.children())[-16:]))
+            self.net = nn.Sequential(
+                *copy.deepcopy(list(vgg_decoder_relu5_1.children())[-16:]))
         elif level == 4:
-            self.net = nn.Sequential(*copy.deepcopy(list(vgg_decoder_relu5_1.children())[-29:]))
+            self.net = nn.Sequential(
+                *copy.deepcopy(list(vgg_decoder_relu5_1.children())[-29:]))
         elif level == 5:
-            self.net = nn.Sequential(*copy.deepcopy(list(vgg_decoder_relu5_1.children())))
+            self.net = nn.Sequential(
+                *copy.deepcopy(list(vgg_decoder_relu5_1.children())))
         else:
             raise ValueError('level should be between 1~5')
 
         if pretrained_path is not None:
-            self.net.load_state_dict(torch.load(pretrained_path, map_location=lambda storage, loc: storage))
+            self.net.load_state_dict(torch.load(
+                pretrained_path, map_location=lambda storage, loc: storage))
 
     def forward(self, x):
         return self.net(x)
 
 
 normalised_vgg_relu5_1 = nn.Sequential(
-	nn.Conv2d(3, 3, 1),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(3, 64, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(64, 64, 3),
-	nn.ReLU(),
-	nn.MaxPool2d(2, ceil_mode=True),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(64, 128, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(128, 128, 3),
-	nn.ReLU(),
-	nn.MaxPool2d(2, ceil_mode=True),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(128, 256, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(256, 256, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(256, 256, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(256, 256, 3),
-	nn.ReLU(),
-	nn.MaxPool2d(2, ceil_mode=True),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(256, 512, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(512, 512, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(512, 512, 3),
-	nn.ReLU(),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(512, 512, 3),
-	nn.ReLU(),
-	nn.MaxPool2d(2, ceil_mode=True),
-	nn.ReflectionPad2d((1, 1, 1, 1)),
-	nn.Conv2d(512, 512, 3),
-	nn.ReLU()
-	)
+    nn.Conv2d(3, 3, 1),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(3, 64, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(64, 64, 3),
+    nn.ReLU(),
+    nn.MaxPool2d(2, ceil_mode=True),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(64, 128, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(128, 128, 3),
+    nn.ReLU(),
+    nn.MaxPool2d(2, ceil_mode=True),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(128, 256, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(256, 256, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(256, 256, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(256, 256, 3),
+    nn.ReLU(),
+    nn.MaxPool2d(2, ceil_mode=True),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(256, 512, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(512, 512, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(512, 512, 3),
+    nn.ReLU(),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(512, 512, 3),
+    nn.ReLU(),
+    nn.MaxPool2d(2, ceil_mode=True),
+    nn.ReflectionPad2d((1, 1, 1, 1)),
+    nn.Conv2d(512, 512, 3),
+    nn.ReLU()
+)
 
 
 class NormalisedVGG(nn.Module):
-	"""
-	VGG reluX_1(X = 1, 2, 3, 4, 5) can be obtained by slicing the follow vgg5_1 model.
+    """
+    VGG reluX_1(X = 1, 2, 3, 4, 5) can be obtained by slicing the follow vgg5_1 model.
 
-	Sequential(
-	(0): Conv2d(3, 3, kernel_size=(1, 1), stride=(1, 1))
-	(1): ReflectionPad2d((1, 1, 1, 1))
-	(2): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1))
-	(3): ReLU() # relu1_1
-	(4): ReflectionPad2d((1, 1, 1, 1))
-	(5): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1))
-	(6): ReLU()
-	(7): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
-	(8): ReflectionPad2d((1, 1, 1, 1))
-	(9): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1))
-	(10): ReLU() # relu2_1
-	(11): ReflectionPad2d((1, 1, 1, 1))
-	(12): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1))
-	(13): ReLU()
-	(14): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
-	(15): ReflectionPad2d((1, 1, 1, 1))
-	(16): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1))
-	(17): ReLU() # relu3_1
-	(18): ReflectionPad2d((1, 1, 1, 1))
-	(19): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
-	(20): ReLU()
-	(21): ReflectionPad2d((1, 1, 1, 1))
-	(22): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
-	(23): ReLU()
-	(24): ReflectionPad2d((1, 1, 1, 1))
-	(25): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
-	(26): ReLU()
-	(27): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
-	(28): ReflectionPad2d((1, 1, 1, 1))
-	(29): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1))
-	(30): ReLU()# relu4_1
-	(31): ReflectionPad2d((1, 1, 1, 1))
-	(32): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
-	(33): ReLU()
-	(34): ReflectionPad2d((1, 1, 1, 1))
-	(35): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
-	(36): ReLU()
-	(37): ReflectionPad2d((1, 1, 1, 1))
-	(38): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
-	(39): ReLU()
-	(40): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
-	(41): ReflectionPad2d((1, 1, 1, 1))
-	(42): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
-	(43): ReLU() # relu5_1
-	)
-	"""
-	def __init__(self, pretrained_path='vgg_normalised_conv5_1.pth'):
-		super().__init__()
-		self.net = normalised_vgg_relu5_1
-		if pretrained_path is not None:
-			self.net.load_state_dict(torch.load(pretrained_path, map_location=lambda storage, loc: storage))
+    Sequential(
+    (0): Conv2d(3, 3, kernel_size=(1, 1), stride=(1, 1))
+    (1): ReflectionPad2d((1, 1, 1, 1))
+    (2): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1))
+    (3): ReLU() # relu1_1
+    (4): ReflectionPad2d((1, 1, 1, 1))
+    (5): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1))
+    (6): ReLU()
+    (7): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
+    (8): ReflectionPad2d((1, 1, 1, 1))
+    (9): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1))
+    (10): ReLU() # relu2_1
+    (11): ReflectionPad2d((1, 1, 1, 1))
+    (12): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1))
+    (13): ReLU()
+    (14): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
+    (15): ReflectionPad2d((1, 1, 1, 1))
+    (16): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1))
+    (17): ReLU() # relu3_1
+    (18): ReflectionPad2d((1, 1, 1, 1))
+    (19): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
+    (20): ReLU()
+    (21): ReflectionPad2d((1, 1, 1, 1))
+    (22): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
+    (23): ReLU()
+    (24): ReflectionPad2d((1, 1, 1, 1))
+    (25): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1))
+    (26): ReLU()
+    (27): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
+    (28): ReflectionPad2d((1, 1, 1, 1))
+    (29): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1))
+    (30): ReLU()# relu4_1
+    (31): ReflectionPad2d((1, 1, 1, 1))
+    (32): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
+    (33): ReLU()
+    (34): ReflectionPad2d((1, 1, 1, 1))
+    (35): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
+    (36): ReLU()
+    (37): ReflectionPad2d((1, 1, 1, 1))
+    (38): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
+    (39): ReLU()
+    (40): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=True)
+    (41): ReflectionPad2d((1, 1, 1, 1))
+    (42): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1))
+    (43): ReLU() # relu5_1
+    )
+    """
 
-	def forward(self, x, target):
-		if target == 'relu1_1':
-			return self.net[:4](x)
-		elif target == 'relu2_1':
-			return self.net[:11](x)
-		elif target == 'relu3_1':
-			return self.net[:18](x)
-		elif target == 'relu4_1':
-			return self.net[:31](x)
-		elif target == 'relu5_1':
-			return self.net(x)
-		else:
-			raise ValueError(f'target should be in ["relu1_1", "relu2_1", "relu3_1", "relu4_1", "relu5_1"] but not {target}')
+    def __init__(self, pretrained_path='vgg_normalised_conv5_1.pth'):
+        super().__init__()
+        self.net = normalised_vgg_relu5_1
+        if pretrained_path is not None:
+            self.net.load_state_dict(torch.load(
+                pretrained_path, map_location=lambda storage, loc: storage))
+
+    def forward(self, x, target):
+        if target == 'relu1_1':
+            return self.net[:4](x)
+        elif target == 'relu2_1':
+            return self.net[:11](x)
+        elif target == 'relu3_1':
+            return self.net[:18](x)
+        elif target == 'relu4_1':
+            return self.net[:31](x)
+        elif target == 'relu5_1':
+            return self.net(x)
+        else:
+            raise ValueError(
+                f'target should be in ["relu1_1", "relu2_1", "relu3_1", "relu4_1", "relu5_1"] but not {target}')
 
 
 def whiten_and_color(content_feature, style_feature, alpha=1):
     """
     A WCT function can be used directly between encoder and decoder
     """
-    cf = content_feature.squeeze(0)#.double()
+    cf = content_feature.squeeze(0)  # .double()
     c, ch, cw = cf.shape
     cf = cf.reshape(c, -1)
     c_mean = torch.mean(cf, 1, keepdim=True)
@@ -254,12 +264,12 @@ def whiten_and_color(content_feature, style_feature, alpha=1):
     w_step2 = torch.mm(w_step1, (c_v[:, :k_c].t()))
     whitened = torch.mm(w_step2, cf)
 
-    sf = style_feature.squeeze(0)#.double()
+    sf = style_feature.squeeze(0)  # .double()
     c, sh, sw = sf.shape
     sf = sf.reshape(c, -1)
     s_mean = torch.mean(sf, 1, keepdim=True)
     sf = sf - s_mean
-    s_cov = torch.mm(sf, sf.t()).div(sh*sw -1)
+    s_cov = torch.mm(sf, sf.t()).div(sh*sw - 1)
     s_u, s_e, s_v = torch.svd(s_cov)
 
     # if necessary, use k-th largest eig-value
@@ -278,12 +288,15 @@ def whiten_and_color(content_feature, style_feature, alpha=1):
     colored_feature = alpha * colored_feature + (1 - alpha) * content_feature
     return colored_feature
 
+
 class SingleLevelAE(nn.Module):
     def __init__(self, level, pretrained_path_dir='model_state'):
         super().__init__()
         self.level = level
-        self.encoder = NormalisedVGG(f'{pretrained_path_dir}/vgg_normalised_conv5_1.pth')
-        self.decoder = Decoder(level, f'{pretrained_path_dir}/decoder_relu{level}_1.pth')
+        self.encoder = NormalisedVGG(
+            f'{pretrained_path_dir}/vgg_normalised_conv5_1.pth')
+        self.decoder = Decoder(
+            level, f'{pretrained_path_dir}/decoder_relu{level}_1.pth')
 
     def forward(self, content_image, style_image, alpha):
         content_feature = self.encoder(content_image, f'relu{self.level}_1')
@@ -296,12 +309,18 @@ class SingleLevelAE(nn.Module):
 class MultiLevelAE(nn.Module):
     def __init__(self, pretrained_path_dir='model_state'):
         super().__init__()
-        self.encoder = NormalisedVGG(f'{pretrained_path_dir}/vgg_normalised_conv5_1.pth')
-        self.decoder1 = Decoder(1, f'{pretrained_path_dir}/decoder_relu1_1.pth')
-        self.decoder2 = Decoder(2, f'{pretrained_path_dir}/decoder_relu2_1.pth')
-        self.decoder3 = Decoder(3, f'{pretrained_path_dir}/decoder_relu3_1.pth')
-        self.decoder4 = Decoder(4, f'{pretrained_path_dir}/decoder_relu4_1.pth')
-        self.decoder5 = Decoder(5, f'{pretrained_path_dir}/decoder_relu5_1.pth')
+        self.encoder = NormalisedVGG(
+            f'{pretrained_path_dir}/vgg_normalised_conv5_1.pth')
+        self.decoder1 = Decoder(
+            1, f'{pretrained_path_dir}/decoder_relu1_1.pth')
+        self.decoder2 = Decoder(
+            2, f'{pretrained_path_dir}/decoder_relu2_1.pth')
+        self.decoder3 = Decoder(
+            3, f'{pretrained_path_dir}/decoder_relu3_1.pth')
+        self.decoder4 = Decoder(
+            4, f'{pretrained_path_dir}/decoder_relu4_1.pth')
+        self.decoder5 = Decoder(
+            5, f'{pretrained_path_dir}/decoder_relu5_1.pth')
 
     def transform_level(self, content_image, style_image, alpha, level):
         content_feature = self.encoder(content_image, f'relu{level}_1')
@@ -317,4 +336,3 @@ class MultiLevelAE(nn.Module):
         r1 = self.transform_level(r2, style_image, alpha, 1)
 
         return r1
-
