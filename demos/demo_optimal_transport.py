@@ -75,6 +75,9 @@ color_src_out = (150, 0, 0)
 color_tgt_center = (0, 0, 250)
 color_tgt_out = (0, 0, 150)
 
+color_bary_center = (0, 250, 0)
+color_bary_out = (0, 150, 0)
+
 color_wall = (115, 0, 0)
 wall_pos = pygame.Rect(508, 384, 8, 384)
 
@@ -95,6 +98,9 @@ use_reg = False
 reg = 1
 
 wall = False
+plot_bary = False
+alpha_bary=0.501
+
 
 #
 lst_metrics = ['euclidean', 'sqeuclidean', 'cityblock', 'wall (geodesic)', 'euclidean (+paywall)']
@@ -128,6 +134,11 @@ def draw_source(world, pos):
 def draw_target(world, pos):
     pygame.draw.circle(world, color_tgt_out, pos, radius+width)
     pygame.draw.circle(world, color_tgt_center, pos, radius)
+
+def draw_bary(world, pos,scale=1.0):
+    pygame.draw.circle(world, color_bary_out, pos, scale*radius+width)
+    pygame.draw.circle(world, color_bary_center, pos, scale*radius)
+
 
 
 def find_overlap(pos, lst):
@@ -205,7 +216,7 @@ def draw_G2(world, G, src, tgt):
                                  src[i], tgt[j], width_m)
 
 
-def draw_G(world, G, src, tgt):
+def draw_G(world, G, src, tgt, only_bary=False):
     Gmax = G.max()
     isort = np.argsort(G.ravel())
     for k in isort:
@@ -213,21 +224,26 @@ def draw_G(world, G, src, tgt):
         if G[i, j] > 1e-8:
             scale = G[i, j]/Gmax
             #print([int(255*(scale)) for c in color_G])
-            if id_metric == 2:
-                mid = (tgt[j][0], src[i][1])
-                pygame.draw.line(world, get_color(scale), src[i], mid, width_m)
-                pygame.draw.line(world, get_color(scale), mid, tgt[j], width_m)
-            
-            elif id_metric == 3:
-                if intercept_wall(src[i], tgt[j]):
-                    mid = (512, 384)
+            if not only_bary:
+                if id_metric == 2:
+                    mid = (tgt[j][0], src[i][1])
                     pygame.draw.line(world, get_color(scale), src[i], mid, width_m)
                     pygame.draw.line(world, get_color(scale), mid, tgt[j], width_m)
+                
+                elif id_metric == 3:
+                    if intercept_wall(src[i], tgt[j]):
+                        mid = (512, 384)
+                        pygame.draw.line(world, get_color(scale), src[i], mid, width_m)
+                        pygame.draw.line(world, get_color(scale), mid, tgt[j], width_m)
+                    else:
+                        pygame.draw.line(world, get_color(scale),
+                                        src[i], tgt[j], width_m)
                 else:
-                    pygame.draw.line(world, get_color(scale),
-                                     src[i], tgt[j], width_m)
-            else:
-                pygame.draw.line(world, get_color(scale), src[i], tgt[j], width_m)
+                    pygame.draw.line(world, get_color(scale), src[i], tgt[j], width_m)
+            if plot_bary:
+                mid = (int((src[i][0]*(1-alpha_bary)+alpha_bary*tgt[j][0])), int((src[i][1]*(1-alpha_bary)+alpha_bary*tgt[j][1])))
+                draw_bary(world, mid, scale) 
+
 
 
 def get_text(lst, deltay=0):
@@ -258,6 +274,7 @@ def update_txt(lstf, reg, use_reg):
 
 
 plot_G = False
+one_dist = False
 
 while 1:
 
@@ -274,6 +291,13 @@ while 1:
             if event.key in [pygame.K_c]:  # clear samples
                 lst_tgt = []
                 lst_src = []
+            if event.key in [pygame.K_o]:  # plot one distributio
+                one_dist = not one_dist
+                lst_tgt = []
+                if one_dist:
+                    lst_src = lst_tgt
+                else:
+                    lst_src = []
             if event.key in [pygame.K_t]:  # roatte target
                 if lst_tgt:
                     lst_tgt = rotate_list(lst_tgt, .1)
@@ -320,6 +344,10 @@ while 1:
                 update_txt(lstf, reg, use_reg)
                 if lst_tgt and lst_src:
                     G = update_G(lst_src, lst_tgt)
+            if event.key in [pygame.K_b]:  # add wall
+                plot_bary = not plot_bary
+            if event.key in [pygame.K_i]:  # add wall
+                alpha_bary = max((alpha_bary+0.1)%1,0.1)
             if event.key in [pygame.K_d]:
                 id_metric = (id_metric+1) % len(lst_metrics)
                 wall = id_metric == 3
@@ -355,6 +383,9 @@ while 1:
     if plot_G:
         if lst_tgt and lst_src:
             draw_G(world, G, lst_src, lst_tgt)
+    else:
+        if lst_tgt and lst_src and plot_bary:
+            draw_G(world, G, lst_src, lst_tgt,only_bary=True)
 
     for pos in lst_src:
         draw_source(world, pos)
