@@ -60,7 +60,7 @@ n_components=2
 
 model_names=['PCA', 'ICA', 'KMeans', 'NMF', 'Sparse DL', 'Kernel PCA' ]
 
-idclass=5
+idclass=0
 
 
 
