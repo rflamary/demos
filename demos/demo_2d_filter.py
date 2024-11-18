@@ -101,17 +101,17 @@ def filter_img(x,idfilt):
         def apply(x):
             h=np.array([[-1,0,1],[-1,0,1],[-1,0,1]])/3
             return np.maximum(np.minimum(sp.signal.convolve(x,h,'same'),1),0)
-        txt= 'Prewit Horiz. Abs.'
+        txt= 'Prewitt Horiz. Abs.'
     if idfilt==5:
         def apply(x):
             h=h=np.array([[-1,0,1],[-1,0,1],[-1,0,1]]).T/3
             return np.maximum(np.minimum(sp.signal.convolve(x,h,'same'),1),0)
-        txt= 'Prewit Vert. Abs.'
+        txt= 'Prewitt Vert. Abs.'
     if idfilt==6:
         def apply(x):
             h=h=np.array([[-1,0,1],[-1,0,1],[-1,0,1]]).T/3
             return abs(sp.signal.convolve(x,h,'same'))**.5+abs(sp.signal.convolve(x,h.T,'same'))**.5
-        txt= 'Prewit Both Abs.'       
+        txt= 'Prewitt Both Abs.'       
     if idfilt==7:
         def apply(x):
             h=np.array([[-1,0,1],[-2,0,2],[-1,0,1]])/4
@@ -228,13 +228,8 @@ while(True):
         cut=0.5        
     if (key & 0xFF) in [ ord('F')]:
         idfilt-=1         
-    if (key & 0xFF) in [ ord('h')]:
-        if not half:
-            do_tv=True
-            half=True
-        else:
-            half=False
-        
+        s=1
+        cut=0.5
 
 # When everything done, release the capture
 cap.release()

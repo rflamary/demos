@@ -80,6 +80,55 @@ Dependencies:
 This demo uses [pygame](https://www.pygame.org/) for visualization and
 [PyAudio](http://people.csail.mit.edu/hubert/pyaudio/) for microphone recording. 
 
+## Real time 2D FFT of webcam
+
+In this demonstration we perform online 2D fft of a webcam input. Both the
+absolute value and the log of the absolute values are displayed and the 0
+frequency is centered on the window (fftshift).
+
+Screenshot:
+
+![screenshot](data/screen_fft.png "screenshot")
+
+Shortcuts:
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>s</kbd> : Save screen to png
+* <kbd>Space</kbd> : Pause FFT
+* <kbd>w</kbd> : Active or deactivate windowing
+
+
+Dependencies:
+
+This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
+webcam access and visualization.
+
+
+
+## Real time 2D filtering of webcam
+
+In this demonstration we perform online 2D filtering of a webcam input. Both the
+original, filtered and FFT of the filtered video with 0
+frequency centered on the window (fftshift) are displayed.
+
+Screenshot:
+
+![screenshot](data/screen_2dfilter.png "screenshot")
+
+Shortcuts:
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>s</kbd> : Save screen to png
+* <kbd>Space</kbd> : Apply/deactivate filter
+* <kbd>f</kbd> : Change filter (average, high pass, Prewitt, Sobel, median, ...)
+* <kbd>+</kbd> <kbd>-</kbd> : Change cutoff frequency of filter (or its size)
+* <kbd>w</kbd> : Active or deactivate windowing
+
+Dependencies:
+
+This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
+webcam access and visualization.
+
 ## 2D classification demo
 
 In this demonstration we illustrate the decision function and update of 2D
@@ -96,6 +145,32 @@ provide decision functions for Linear and Gaussian Kernel SVMs.
 * <kbd>m</kbd> : Change classifier (Linear/Gaussian SVM)
 * <kbd>Up</kbd> : Make Gaussian Gamma parameter larger
 * <kbd>Down</kbd> : Make Gaussian Gamma parameter smaller
+* <kbd>s</kbd> : save screenshot
+
+Dependencies:
+
+This demo uses [pygame](https://www.pygame.org/) for visualization and
+[Scikit-learn](https://scikit-learn.org/) for classification.
+
+## 2D Dictionary learning demo
+
+In this demonstration we illustrate dictionary learning on 2D data. The user cla
+click on the window to add samples (left click) and to remove samples (right
+click). The dictionary is learned in real time and the atoms are displayed.
+
+
+
+![screenshot](data/screen_dico_2D.png "screenshot")
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>left click</kbd> : Add sample
+* <kbd>right click</kbd> : Remove sample
+* <kbd>c</kbd> : Clear training data
+* <kbd>Space</kbd> : Show/hide dictionary atoms and color samples wrt their representation
+* <kbd>m</kbd> : Change method (PCA, ICA KMeans, NMF, SparsePCA, DictionaryLearning)
+* <kbd>p</kbd> : Show projected and reconstructed samples
+* <kbd>Up</kbd> : Increment the number of atoms
+* <kbd>Down</kbd> : Decrement the number of atoms
 * <kbd>s</kbd> : save screenshot
 
 Dependencies:
