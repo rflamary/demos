@@ -129,9 +129,12 @@ while(True):
         txt=decode_predictions(pred,5)
         #print txt
         for i,p in enumerate(txt[0]):
-            cv2.putText(screen,"{:.3f}: {}".format(float(p[2]),dico_french[p[1]]),(0,28*i+30),cv2.FONT_HERSHEY_DUPLEX,1,col,1)
-
-            
+            text = "{:.3f}: {}".format(float(p[2]), dico_french[p[1]])
+            (text_width, text_height), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_DUPLEX, 1, 1)
+            x, y = 0, 28 * i + 30
+            cv2.rectangle(screen, (x, y - text_height - 5), (x + text_width + 10, y + 5), (255, 255, 255), -1)
+            cv2.putText(screen, text, (x + 5, y), cv2.FONT_HERSHEY_DUPLEX, 1, col, 1)
+                        
     # Display the resulting frame
     cv2.imshow('Diffusion Demo',screen)
 
