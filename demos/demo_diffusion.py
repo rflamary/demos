@@ -106,11 +106,11 @@ while(True):
         classif=not classif
     if (key & 0xFF) in [ ord('n')]:
         noise = get_noise()
-    if key == 83:  # Right arrow key
+    if key == 83 or key == 3:  # Right arrow key
         noise_level = min( nb_noise_levels-1, noise_level + 1)
             
         print("Noise level: {}".format(noise_level))
-    if key == 81:  # Left arrow key
+    if key == 81 or key == 2:  # Left arrow key
         noise_level = max(0, noise_level - 1)
         print("Noise level: {}".format(noise_level))
          
