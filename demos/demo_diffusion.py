@@ -44,7 +44,7 @@ pred=0
 idscreen=0
 loop=False
 
-col=[0,255,00]
+col=[0,0,00]
 
 loop_webcam=True
 use_webcam=True
