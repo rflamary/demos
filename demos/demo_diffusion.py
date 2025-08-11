@@ -81,7 +81,19 @@ noise = get_noise()
 
 while(True):
     # Capture frame-by-frame
-    ret, frame = cap.read()
+    if use_webcam:
+        ret, frame = cap.read()    
+    else:
+        ret = True  
+
+    frame0 = frame.copy()
+
+    if loop_webcam:
+        framen = add_noise(frame0, noise)
+        screen = framen.copy()
+    else:
+        framen = add_noise(frame0, noise)
+        screen=framen.copy()
 
     if loop_webcam:
         frame0 = frame.copy()
@@ -134,6 +146,13 @@ while(True):
             x, y = 0, 28 * i + 30
             cv2.rectangle(screen, (x, y - text_height - 5), (x + text_width + 10, y + 5), (255, 255, 255), -1)
             cv2.putText(screen, text, (x + 5, y), cv2.FONT_HERSHEY_DUPLEX, 1, col, 1)
+
+    if (key & 0xFF) in [ ord('i')]:
+        use_webcam=not use_webcam
+        picture=cv2.imread("../data/chat.JPG")
+        framen= cv2.resize(picture, (size[1], size[0]))
+        cv2.imshow('Diffusion Demo',framen)
+        frame = framen.copy()  # Set the screen to the resized cat image
                         
     # Display the resulting frame
     cv2.imshow('Diffusion Demo',screen)
