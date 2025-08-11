@@ -56,6 +56,9 @@ ret, frame = cap.read()
 size = frame.shape
 print("Size of the webcam image: {}".format(size))
 
+pictures=["../data/chat.JPG", "../data/nala.jpg", "../data/tasse.jpeg"]
+count=0
+
 def get_noise():
     sigma = 5
     noise = np.zeros((nb_noise_levels, size[0], size[1], 3), dtype=np.float32)
@@ -148,11 +151,15 @@ while(True):
             cv2.putText(screen, text, (x + 5, y), cv2.FONT_HERSHEY_DUPLEX, 1, col, 1)
 
     if (key & 0xFF) in [ ord('i')]:
-        use_webcam=not use_webcam
-        picture=cv2.imread("../data/chat.JPG")
+        count+=1
+        use_webcam=False
+        picture=cv2.imread(pictures[count%len(pictures)])
         framen= cv2.resize(picture, (size[1], size[0]))
         cv2.imshow('Diffusion Demo',framen)
         frame = framen.copy()  # Set the screen to the resized cat image
+
+    if (key & 0xFF) in [ ord('w')]:
+        use_webcam=True
                         
     # Display the resulting frame
     cv2.imshow('Diffusion Demo',screen)
