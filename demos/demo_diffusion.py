@@ -136,7 +136,7 @@ while(True):
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)
 
-        if loop:
+        if loop_webcam:
             pred = alpha*pred+(1-alpha)*model.predict(x)
         else:
             pred = model.predict(x)

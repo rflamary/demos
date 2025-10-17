@@ -39,7 +39,7 @@ elif model=='VGG16':
     model=keras.applications.vgg16.VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=None)
 
 
-alpha=0.95
+alpha=0.99
 pred=0
 idscreen=0
 loop=False
