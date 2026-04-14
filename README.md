@@ -129,6 +129,25 @@ Dependencies:
 This demo uses [opencv-python](https://github.com/skvark/opencv-python) for
 webcam access and visualization.
 
+## Real time diffusion model demo on webcam
+
+In this demonstration we perform a demo of diffusion of a webcam input and show
+the forward and backward diffusion. 
+
+Screenshot:
+![screenshot](data/screen_diffusion.png "screenshot")
+
+Shortcuts:
+
+* <kbd>q</kbd> : Quit demo
+* <kbd>Space</kbd> : Start/stop diffusion
+* <kbd>c</kbd> : Show/ hide object classifier prediction (trained on ImageNet,
+  french labels)
+* <kbd>right</kbd> : Increase diffusion coefficient
+* <kbd>left</kbd> : Decrease diffusion coefficient
+* <kbd>i</kbd> : Switch input to image/change image (instead of webcam)
+* <kbd>w</kbd> : Switch input to webcam
+
 ## 2D classification demo
 
 In this demonstration we illustrate the decision function and update of 2D
