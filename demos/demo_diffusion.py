@@ -19,7 +19,13 @@ import PIL.Image
 import keras
 from keras.preprocessing import image
 
+
+
 dico_french_file = '../data/imagenet_class_french2.json'
+
+# make path relative to python file
+dico_french_file = os.path.join(os.path.dirname(__file__), dico_french_file)
+
 dico_french = json.load(open(dico_french_file))
 
 model = 'VGG16'
@@ -66,6 +72,8 @@ if resize_shape is not None:
     print("Resizing webcam image to: {}".format(resize_shape))
 
 pictures=["../data/chat.JPG", "../data/nala.jpg", "../data/tasse.jpeg"]
+# make path relative to python file
+pictures = [os.path.join(os.path.dirname(__file__), p) for p in pictures]
 count=0
 
 def get_noise():
