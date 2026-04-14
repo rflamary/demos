@@ -5,7 +5,7 @@ Created on Thu Dec 22 09:44:57 2016
 
 @author: rflamary
 """
-
+import os
 import numpy as np
 import pylab as pl
 import numpy as np
@@ -56,6 +56,15 @@ ret, frame = cap.read()
 size = frame.shape
 print("Size of the webcam image: {}".format(size))
 
+resize_shape = os.getenv('RESIZE', None)
+if resize_shape is not None:
+    resize_shape = resize_shape.split('x')
+    assert len(resize_shape) == 2, "Error: invalid resize parameter: {}".format(resize_shape)
+    resize_shape = tuple([int(i) for i in resize_shape[::-1]] + [3])
+    size = resize_shape
+
+    print("Resizing webcam image to: {}".format(resize_shape))
+
 pictures=["../data/chat.JPG", "../data/nala.jpg", "../data/tasse.jpeg"]
 count=0
 
@@ -86,6 +95,8 @@ while(True):
     # Capture frame-by-frame
     if use_webcam:
         ret, frame = cap.read()    
+        if resize_shape is not None:
+            frame = cv2.resize(frame, resize_shape[:2][::-1])
     else:
         ret = True  
 
@@ -121,11 +132,11 @@ while(True):
         classif=not classif
     if (key & 0xFF) in [ ord('n')]:
         noise = get_noise()
-    if key == 83 or key == 3:  # Right arrow key
+    if key == 83 or key == 124 or key == 3:  # Right arrow key
         noise_level = min( nb_noise_levels-1, noise_level + 1)
             
         print("Noise level: {}".format(noise_level))
-    if key == 81 or key == 2:  # Left arrow key
+    if key == 81 or key == 123 or key == 2:  # Left arrow key
         noise_level = max(0, noise_level - 1)
         print("Noise level: {}".format(noise_level))
          
