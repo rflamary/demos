@@ -84,10 +84,11 @@ print("Model loaded")
 
 def transfer(c, s, alpha=1):
     c = c[:, :, ::-1].copy()
-    c_tensor = trans(c.astype(np.float32)).unsqueeze(0).to(device)
-    s_tensor = trans(s.astype(np.float32)).unsqueeze(0).to(device)
+    c_tensor = trans(c.astype(np.float32) / 255.0).unsqueeze(0).to(device)
+    s_tensor = trans(s.astype(np.float32) / 255.0).unsqueeze(0).to(device)
     with torch.no_grad():
         out = model(c_tensor, s_tensor, alpha)
+    out = torch.clamp(out, 0.0, 1.0)
     return out.numpy()[0, :, :, :]
 
 
@@ -174,7 +175,7 @@ while (True):
             os.mkdir('out/{}'.format(folder))
         cv2.imwrite(fname.format(folder, idimg, '0'), frame_webcam)
         cv2.imwrite(fname.format(folder, idimg,
-                    lst_name[id_style]), frame_style[:, :, from_RGB]*255)
+                    lst_name[id_style]), (frame_style[:, :, from_RGB]*255).astype(np.uint8))
         print("Images saved")
     if (key & 0xFF) in [ord('q')]:
         break
@@ -185,10 +186,9 @@ while (True):
         for i in range(len(lst_style)):
             temp = np.array(transfer(frame_webcam, lst_style[i], alpha=alpha))
         # print(temp)
-            for k in range(3):
-                frame_style[:, :, k] = temp[k, :, :]/255
+            frame_style = temp.transpose(1, 2, 0)
             cv2.imwrite(fname.format(folder, idimg,
-                        lst_name[i]), frame_style[:, :, from_RGB]*255)
+                        lst_name[i]), (frame_style[:, :, from_RGB]*255).astype(np.uint8))
             print('Applied style from file {}'.format(lst_style0[i]))
             cv2.imshow('Transferred image ({})'.format(
                 lst_style0[i]), frame_style[:, :, from_RGB])
@@ -208,8 +208,7 @@ while (True):
         temp = np.array(
             transfer(frame_webcam, lst_style[id_style], alpha=alpha))
         # print(temp)
-        for i in range(3):
-            frame_style[:, :, i] = temp[i, :, :]/255
+        frame_style = temp.transpose(1, 2, 0)
         print('Applied style from file {}'.format(lst_style0[id_style]))
 
 
