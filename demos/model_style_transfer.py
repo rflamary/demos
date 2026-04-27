@@ -346,7 +346,7 @@ class MultiLevelAE(nn.Module):
     def transform_level(self, content_image, style_image, alpha, level):
         content_feature = self.encoder(content_image, f'relu{level}_1')
         style_feature = self.encoder(style_image, f'relu{level}_1')
-        res = whiten_and_color2(content_feature, style_feature, alpha)
+        res = whiten_and_color(content_feature, style_feature, alpha)
         return getattr(self, f'decoder{level}')(res)
 
     def forward(self, content_image, style_image, alpha=1):
