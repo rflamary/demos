@@ -14,6 +14,9 @@ import pylab as pl
 import json
 cap = cv2.VideoCapture(0)
 
+import os
+os.environ["KERAS_BACKEND"] = "torch"  # gives same output on backend = torch
+
 
 import PIL.Image
 import keras
@@ -39,7 +42,7 @@ elif model=='VGG16':
     model=keras.applications.vgg16.VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=None)
 
 
-alpha=0.99
+alpha=0.90
 pred=0
 idscreen=0
 loop=False
