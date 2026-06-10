@@ -122,7 +122,8 @@ lst_style = ['antimonocromatismo.jpg',
             # 'miro.jpg',
              'monet1.jpg',
              #'monet2.jpg',
-             'dragibus.png' ]
+             'dragibus.png',
+             'tarte.jpg' ]
 
 lst_style0 = lst_style
 
