@@ -30,7 +30,7 @@ import cv2
 from PIL import Image
 import torch
 from torchvision import transforms
-from model_style_transfer_continuous import AdaINStyleTransfer
+from model_style_transfer_rt import AdaINStyleTransfer
 from datetime import datetime
 import os
 import urllib.request
@@ -68,7 +68,7 @@ idimg = 0
 
 fname = "out/{}/{}_{}.jpg"
 
-DOWNSCALE_RATIO = 1
+DOWNSCALE_RATIO = 2.0
 CAMERA_WIDTH = 640
 CAMERA_HEIGHT = 480
 CONTENT_STD_BLEND = 0.45
@@ -113,8 +113,8 @@ def transfer(c, style_id, alpha=1, resize=True):
     if resize:
         h, w = c.shape[:2]
         c = cv2.resize(c,
-                       (max(1, w//DOWNSCALE_RATIO),
-                        max(1, h//DOWNSCALE_RATIO)),
+                       (max(1, int(w/DOWNSCALE_RATIO)),
+                        max(1, int(h/DOWNSCALE_RATIO))),
                        interpolation=cv2.INTER_AREA)
 
     c_tensor = trans(c.astype(np.float32) / 255.0).unsqueeze(0).to(device)
@@ -293,7 +293,7 @@ while (True):
         h, w = frame_webcam.shape[:2]
         print('Internal processing resize toggled: {} '
               '(NN running at {}x{} when ON)'.format(
-                  state, w//DOWNSCALE_RATIO, h//DOWNSCALE_RATIO))
+                  state, int(w/DOWNSCALE_RATIO), int(h/DOWNSCALE_RATIO)))
     if (key & 0xFF) in [ord('v')]:
         continuous = not continuous
         state = 'ON (Live Video)' if continuous else 'OFF (Manual Spacebar)'

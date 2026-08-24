@@ -71,7 +71,7 @@ idimg = 0
 
 fname = "out/{}/{}_{}.jpg"
 
-DOWNSCALE_RATIO = 2
+DOWNSCALE_RATIO = 2.0
 
 if torch.backends.mps.is_available():
     device = torch.device('mps')
@@ -100,8 +100,8 @@ def transfer(c, s, alpha=1, resize=True):
     if resize:
         h, w = c.shape[:2]
         c = cv2.resize(c,
-                       (max(1, w//DOWNSCALE_RATIO),
-                        max(1, h//DOWNSCALE_RATIO)),
+                       (max(1, int(w/DOWNSCALE_RATIO)),
+                        max(1, int(h/DOWNSCALE_RATIO))),
                        interpolation=cv2.INTER_AREA)
 
     c_tensor = trans(c.astype(np.float32) / 255.0).unsqueeze(0).to(device)
@@ -161,7 +161,7 @@ from_RGB = [2, 1, 0]
 
 
 pause = False
-resize = True
+resize = False
 
 ret, frame0 = cap.read()
 frame0 = np.asfortranarray(np.array(frame0)/255)
@@ -236,7 +236,7 @@ while (True):
         h, w = frame_webcam.shape[:2]
         print('Internal processing resize toggled: {} '
               '(NN running at {}x{} when ON)'.format(
-                  state, w//DOWNSCALE_RATIO, h//DOWNSCALE_RATIO))
+                  state, int(w/DOWNSCALE_RATIO), int(h/DOWNSCALE_RATIO)))
     if (key & 0xFF) in [ord(' ')]:
         pause = True
         temp = np.array(
