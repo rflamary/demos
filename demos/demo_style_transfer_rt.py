@@ -36,6 +36,20 @@ import os
 import urllib.request
 import warnings
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-r',
+    '--downscale_ratio',
+    type=float,
+    default=1.0,
+    help='Downscale ratio for internal processing'
+)
+args = parser.parse_args()
+DOWNSCALE_RATIO = args.downscale_ratio
+print('Internal processing downscale ratio: {}'.format(DOWNSCALE_RATIO))
+
 
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -68,7 +82,6 @@ idimg = 0
 
 fname = "out/{}/{}_{}.jpg"
 
-DOWNSCALE_RATIO = 2.0
 CAMERA_WIDTH = 640
 CAMERA_HEIGHT = 480
 CONTENT_STD_BLEND = 0.45
@@ -235,7 +248,13 @@ while (True):
 
     # Display the images
     cv2.imshow('Webcam', frame_webcam)
-    cv2.imshow('Transferred image', frame_style[:, :, from_RGB])
+    h, w = frame_webcam.shape[:2]
+    display_style = cv2.resize(
+        frame_style[:, :, from_RGB],
+        (w, h),
+        interpolation=cv2.INTER_LINEAR
+    )
+    cv2.imshow('Transferred image', display_style)
 
     cv2.imshow('Target Style', lst_style[id_style][:, :, from_RGB])
 

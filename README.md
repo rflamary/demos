@@ -209,6 +209,8 @@ of the paper [Universal Style Transfer via Feature Transforms](https://arxiv.org
 
 Computational time for transfer takes a few seconds on a laptop with no GPU and  freeze the windows.
 
+Real-Time Style Transfer is also provided in a separate script.
+
 ![screenshot](data/screen_style_transfer.png "screenshot")
 
 
