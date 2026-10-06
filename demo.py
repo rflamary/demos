@@ -51,7 +51,7 @@ parser.add_argument('-l','--list',action='store_true', help='List all demos')
 parser.add_argument('-d','--dependencies',action='store_true', help='List dependencies for current demo')
 parser.add_argument('run',default='',nargs='?', help='List all demos')
 
-args = parser.parse_args()
+args, extra_args = parser.parse_known_args()
 
 if args.list:
     for key in config:
@@ -69,7 +69,7 @@ elif args.run:
         print('Error: "{}" is not a valid demo name. \nExecute demo.py with -l parameter to get a list of demos '.format(args.run))
     else:
         # execute the script
-        subprocess.call(['python3',config[args.run]['file']],cwd=path)
+        subprocess.call(['python3', config[args.run]['file']] + extra_args,cwd=path)
 else:
     print('No demo name given, choose between the following:')
     for key in config:
